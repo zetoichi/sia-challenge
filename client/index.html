@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebM Streaming</title>
+  </head>
+  <body>
+    <h1>WebM Video Streaming</h1>
+    <video id="video" controls autoplay></video>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+      const socket = io();
+      const video = document.getElementById('video');
+      const mediaSource = new MediaSource();
+
+      video.src = URL.createObjectURL(mediaSource);
+
+      mediaSource.addEventListener('sourceopen', () => {
+        const sourceBuffer = mediaSource.addSourceBuffer(
+          'video/webm; codecs="vp8, vorbis"'
+        );
+
+        // Buffer queue to hold incoming chunks
+        const bufferQueue = [];
+
+        socket.on('video-chunk', (chunk) => {
+          if (!sourceBuffer.updating && bufferQueue.length === 0) {
+            sourceBuffer.appendBuffer(new Uint8Array(chunk));
+          } else {
+            bufferQueue.push(new Uint8Array(chunk));
+          }
+        });
+
+        sourceBuffer.addEventListener('updateend', () => {
+          if (bufferQueue.length > 0 && !sourceBuffer.updating) {
+            sourceBuffer.appendBuffer(bufferQueue.shift());
+          }
+        });
+
+        socket.on('end', () => {
+          mediaSource.endOfStream();
+        });
+      });
+    </script>
+  </body>
+</html>

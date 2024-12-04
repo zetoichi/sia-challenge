@@ -1,0 +1,30 @@
+{
+  "name": "sia-challenge-player",
+  "version": "1.0.0",
+  "description": "A minimal app to stream video via WebSocket using socket.io",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "start:dev": "nodemon server.js",
+    "build": "babel server.js --out-file dist/server.js",
+    "format": "prettier --write \"**/*.{js,json,html,css}\"",
+    "format-check": "prettier --check \"**/*.{js,json,html,css}\""
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.5.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.10",
+    "@babel/core": "^7.22.10",
+    "@babel/preset-env": "^7.22.10",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.4.2",
+    "prettier-eslint": "^16.3.0"
+  },
+  "author": "AZ",
+  "license": "MIT"
+}
