@@ -1,12 +1,17 @@
+import 'dotenv/config';
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import routes from './routes.js';
 
 const app = express();
+app.use(express.static('public'));
+app.use('/api', routes);
 const server = createServer(app);
+
 const io = new Server(server);
 
 const __filename = fileURLToPath(import.meta.url);
@@ -14,8 +19,6 @@ const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 3000;
 const INDEX = path.join(__dirname, '../client/index.html');
 const VIDEO_PATH = path.join(__dirname, '../media/sample_short.webm');
-
-app.use(express.static('public'));
 
 app.get('/', (req, res) => {
   res.sendFile(INDEX);
@@ -62,7 +65,7 @@ io.on('connection', (socket) => {
     };
 
     socket.on(`restart:${sessionId}`, restartListener);
-    
+
     socket.on('disconnect', disconnectListener);
 
     stream.on('data', (chunk) => {
@@ -84,6 +87,10 @@ io.on('connection', (socket) => {
   socket.on('start', ({ sessionId }) => {
     console.log(`Starting stream for session ${sessionId}`);
     streamVideo(sessionId);
+  });
+
+  socket.on('control', (data) => {
+    socket.broadcast.emit('control', data);
   });
 });
 

@@ -4,7 +4,7 @@ const playVideo = (video, socket) => {
   handleMediaSourceEvents(mediaSource, socket, sessionId);
 
   socket.emit('start', { sessionId });
-}
+};
 
 const restartVideo = (video, socket) => {
   console.log('Video playback ended. Restarting stream.');
@@ -12,7 +12,8 @@ const restartVideo = (video, socket) => {
 
   video.pause();
   video.removeAttribute('src');
-  video.load();
+  video.currentTime = 0;
+  socket.emit('control', { action: 'play', currentTime: 0 });
 
-  video.dispatchEvent(startPlayEvent);
-}
+  video.dispatchEvent(loadEvent);
+};

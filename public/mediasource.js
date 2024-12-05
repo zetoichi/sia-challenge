@@ -57,3 +57,11 @@ const handleMediaSourceEvents = (mediasource, socket, sessionId) => {
     });
   });
 };
+
+const cleanupMediaSource = (video) => {
+  if (video.src) {
+    URL.revokeObjectURL(video.src);
+    video.removeAttribute('src');
+    video.load();
+  }
+};
