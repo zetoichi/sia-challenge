@@ -1,10 +1,9 @@
-import 'dotenv/config';
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+
+import { PORT, INDEX, VIDEO_PATH } from './settings.js';
 import routes from './routes.js';
 
 const app = express();
@@ -13,12 +12,6 @@ app.use('/api', routes);
 const server = createServer(app);
 
 const io = new Server(server);
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const PORT = process.env.PORT || 3000;
-const INDEX = path.join(__dirname, '../client/index.html');
-const VIDEO_PATH = path.join(__dirname, '../media/sample_short.webm');
 
 app.get('/', (req, res) => {
   res.sendFile(INDEX);
